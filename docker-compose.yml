@@ -20,6 +20,11 @@ services:
     environment:
       DATABASE_URL: ${DATABASE_URL}
       PORT: 8080
+      GITHUB_TOKEN: ${GITHUB_TOKEN:-}
+      GITHUB_REPO: ${GITHUB_REPO:-comet-ml/opik}
+      METRICS_WINDOW_DAYS: ${METRICS_WINDOW_DAYS:-90}
+      DISENGAGED_MULTIPLIER: ${DISENGAGED_MULTIPLIER:-2.0}
+      METRICS_CACHE_TTL: ${METRICS_CACHE_TTL:-10m}
     volumes:
       - ./backend:/app
     depends_on:

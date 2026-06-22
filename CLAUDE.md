@@ -43,6 +43,7 @@ Both backend (Air) and frontend (Vite) hot-reload on file save. No container res
 | `backend/cmd/backend/main.go` | Entry point: load config, connect DB, run migrations, start server |
 | `backend/internal/api/router.go` | Route registrations in `/api/v1` group |
 | `backend/internal/api/handlers.go` | HTTP handlers (add more files per resource as needed) |
+| `backend/internal/service/` | Business logic — keep calculations, integrations, and domain rules here (e.g. metric calculations + GitHub integration). The API layer must stay thin and delegate to this layer |
 | `backend/internal/dal/db.go` | `NewDB()` and `RunMigrations()` |
 | `backend/internal/config/config.go` | Configuration loading |
 | `backend/internal/model/` | Domain structs / entities |
@@ -136,6 +137,11 @@ Create `frontend/src/pages/ItemsPage.tsx` and add it to the router in `App.tsx`.
 | `POSTGRES_USER` | DB user (used by postgres container) |
 | `POSTGRES_PASSWORD` | DB password |
 | `POSTGRES_DB` | DB name |
+| `GITHUB_TOKEN` | GitHub personal access token for the metrics integration (recommended; raises rate limit to 5000 req/hr) |
+| `GITHUB_REPO` | Repository to track as `owner/repo` (default: `comet-ml/opik`) |
+| `METRICS_WINDOW_DAYS` | How far back metrics look, in days (default: 90) |
+| `DISENGAGED_MULTIPLIER` | Factor over the average time-to-address that marks a PR as disengaged (default: 2.0) |
+| `METRICS_CACHE_TTL` | In-memory metrics cache lifetime as a Go duration (default: 10m) |
 
 ## Go Module
 

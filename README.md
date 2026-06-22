@@ -22,6 +22,9 @@ make up
 
 - App: http://localhost:3000
 - API health: http://localhost:3000/api/v1/health
+- Metrics API: http://localhost:3000/api/v1/metrics
+
+> **Tip:** set `GITHUB_TOKEN` in your `.env` before `make up`. Without it, the metrics endpoint falls back to unauthenticated GitHub access (60 requests/hour), which is easily exhausted.
 
 ---
 
@@ -36,6 +39,33 @@ Browser → nginx:3000
 ```
 
 All traffic flows through a single Nginx entry point.
+
+The backend is layered: the **API layer** (`internal/api`) stays thin and only handles HTTP, delegating all business logic — metric calculations and the GitHub integration — to the **service layer** (`internal/service`).
+
+---
+
+## Repository Metrics
+
+The dashboard computes four health metrics for the configured GitHub repo (default `comet-ml/opik`), served from `GET /api/v1/metrics`:
+
+| Metric | Definition |
+|---|---|
+| Average time to address a PR | Mean `closed_at − created_at` over PRs merged/closed in the window |
+| Disengaged PRs | Count of open PRs whose age exceeds `avg time-to-address × DISENGAGED_MULTIPLIER` |
+| Open bug issues | Count of open issues whose title is prefixed with `[BUG]` |
+| Average time to close a bug | Mean `closed_at − created_at` over closed `[BUG]` issues in the window |
+
+Data is fetched live from the GitHub REST API and cached in memory for `METRICS_CACHE_TTL` to respect rate limits — no database tables or background jobs are involved.
+
+**Environment variables** (see `.env.example`):
+
+| Variable | Default | Description |
+|---|---|---|
+| `GITHUB_TOKEN` | _(empty)_ | GitHub personal access token; recommended to raise the rate limit to 5000 req/hr |
+| `GITHUB_REPO` | `comet-ml/opik` | Repository to track, as `owner/repo` |
+| `METRICS_WINDOW_DAYS` | `90` | How far back metrics look |
+| `DISENGAGED_MULTIPLIER` | `2.0` | Factor over the average that marks a PR as disengaged |
+| `METRICS_CACHE_TTL` | `10m` | In-memory cache lifetime (Go duration) |
 
 ---
 
@@ -58,9 +88,12 @@ Both the backend (Air) and frontend (Vite) support hot reload — file saves are
 ```
 fsa-boilerplate/
 ├── backend/
-│   ├── api/             # HTTP handlers and router (/api/v1 routes)
-│   ├── dal/             # data access layer (DB connection, migrations)
-│   ├── config/          # environment configuration
+│   └── internal/
+│       ├── api/         # HTTP handlers and router (/api/v1 routes)
+│       ├── service/     # business logic (metric calculations, GitHub integration)
+│       ├── dal/         # data access layer (DB connection, migrations)
+│       ├── model/       # domain structs / entities
+│       └── config/      # environment configuration
 │   └── migrations/      # *.sql files run in order at startup
 ├── frontend/
 │   ├── components.json  # shadcn/ui CLI config

@@ -6,6 +6,7 @@ import (
 	"fsa-boilerplate/backend/internal/api"
 	"fsa-boilerplate/backend/internal/config"
 	"fsa-boilerplate/backend/internal/dal"
+	"fsa-boilerplate/backend/internal/service"
 )
 
 func main() {
@@ -21,7 +22,13 @@ func main() {
 		log.Fatalf("failed to run migrations: %v", err)
 	}
 
-	r := api.New(db)
+	fetcher, err := service.NewGitHubFetcher(cfg.GitHubToken, cfg.GitHubRepo)
+	if err != nil {
+		log.Fatalf("failed to init github fetcher: %v", err)
+	}
+	metricsSvc := service.NewMetricsService(fetcher, cfg.GitHubRepo, cfg.MetricsWindowDays, cfg.DisengagedMultiplier, cfg.MetricsCacheTTL)
+
+	r := api.New(db, metricsSvc)
 
 	port := cfg.Port
 	if port == "" {
