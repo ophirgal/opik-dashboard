@@ -1,6 +1,6 @@
-# FSA Boilerplate
+# Opik Dashboard
 
-Full-stack application boilerplate for AI-assisted coding interviews (60–90 min).
+A project health dashboard for [Opik](https://github.com/comet-ml/opik), the open-source LLM evaluation and observability platform by [Comet](https://comet.com). Tracks repository metrics, contributor activity, issue trends, and release health in one place.
 
 **Stack:** Go + Gin · React + TypeScript + TailwindCSS + shadcn/ui + Axios + React Query · PostgreSQL · Nginx · Docker Compose
 

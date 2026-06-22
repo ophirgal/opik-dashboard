@@ -1,6 +1,6 @@
 # Project Context
 
-This is a full-stack web application built for a coding interview. The goal is to implement the required features as quickly and cleanly as possible.
+This is a project health dashboard for Opik, the open-source LLM evaluation and observability platform by Comet (comet.com). It tracks repository metrics, contributor activity, issue trends, and release health.
 
 ## Stack
 
@@ -139,7 +139,7 @@ Create `frontend/src/pages/ItemsPage.tsx` and add it to the router in `App.tsx`.
 
 ## Go Module
 
-Module name: `fsa-boilerplate/backend`
+Module name: `fsa-boilerplate/backend` (legacy name in go.mod — do not rename without updating all import paths)
 
 Import paths follow `fsa-boilerplate/backend/internal/<package>` (e.g., `fsa-boilerplate/backend/internal/api`, `fsa-boilerplate/backend/internal/dal`, `fsa-boilerplate/backend/internal/config`).
 

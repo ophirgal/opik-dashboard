@@ -27,7 +27,7 @@ func main() {
 	if port == "" {
 		port = "8080"
 	}
-	log.Printf("server listening on :%s", port)
+	log.Printf("opik-dashboard server listening on :%s", port)
 	if err := r.Run(":" + port); err != nil {
 		log.Fatalf("server error: %v", err)
 	}
